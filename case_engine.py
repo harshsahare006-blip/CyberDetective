@@ -24,29 +24,40 @@ class CaseEngine:
 
     def show_help(self):
 
-        print("\n===== COMMANDS =====")
+     print("\n===== COMMANDS =====")
 
-        if self.mission_stage == 1:
+     if self.mission_stage == 1:
 
-            print("help")
-            print("case")
-            print("investigate")
-            print("hint (get investigation clue)")
+        print("help")
+        print("case")
+        print("investigate")
+        print("hint (get investigation clue)")
 
-        elif self.mission_stage == 2:
+     elif self.mission_stage == 2:
 
-            print("help")
-            print("evidence")
-            print("notes")
-            print("add note")
-            print("hint (analyze clue)")
+        print("help")
+        print("evidence")
+        print("notes")
+        print("add note <text>")
+        print("hint (analyze clue)")
 
-        elif self.mission_stage == 3:
+     elif self.mission_stage == 3:
 
-            print("help")
-            print("submit report")
-            print("evidence")
-            print("hint (final guidance)")
+        print("help")
+        print("submit report")
+        print("evidence")
+        print("hint (final guidance)")
+
+    def show_hint(self):
+
+     if self.mission_stage == 1:
+        print("\nHint: Investigate available targets.")
+
+     elif self.mission_stage == 2:
+        print("\nHint: Review evidence and write notes.")
+
+     elif self.mission_stage == 3:
+        print("\nHint: You have enough information to submit a report.")
 
     def show_case(self):
 
@@ -86,6 +97,8 @@ class CaseEngine:
 
     def show_investigation_menu(self):
 
+     while True:
+
         print("\n===== INVESTIGATION TARGETS =====")
         print("1. Logs")
         print("2. Employees")
@@ -108,7 +121,7 @@ class CaseEngine:
             self.handle_investigation("database")
 
         elif choice == "0":
-            return
+            break
 
         else:
             print("Invalid choice")
@@ -131,7 +144,44 @@ class CaseEngine:
 
         self.investigated.add(target)
 
-        print("\nInvestigation complete.")
+        if len(self.investigated) >= 1:
+          self.mission_stage = 2
+
+        if len(self.investigated) == len(clues):
+
+         self.mission_stage = 3
+
+         print("\n" + "=" * 40)
+         print("INVESTIGATION COMPLETE")
+         print("=" * 40)
+
+         print("✓ All clues collected")
+         print("✓ Report System Unlocked")
+
+         print("\nRecommended Commands:")
+         print("evidence")
+         print("notes")
+         print("submit report")
+
+
+
+        remaining = set(clues.keys()) - self.investigated
+
+        if remaining:
+
+          print("\nRemaining Targets:")
+
+        for item in remaining:
+
+         print(f"- {item.title()}")
+
+
+        if len(self.investigated) < len(clues):
+
+         print("\nNext Step:")
+         print("Type 'investigate' to continue.")
+         print("Type 'evidence' to review evidence.")
+         print("Type 'notes' to review notes.")
 
     def start(self):
 
@@ -166,14 +216,18 @@ class CaseEngine:
 
                 self.evidence.show()
 
-            elif command == "show notes":
+            elif command == "hint":
+
+             self.show_hint()
+
+            elif command == "notes":
 
                 self.notes.show_notes()
 
 
-            elif command.startswith("add note "):
+            elif command == "add note":
 
-             note_text = command.replace("add note ", "", 1)
+             note_text = input("Enter note: ")
 
              self.notes.add_note(note_text)
 
